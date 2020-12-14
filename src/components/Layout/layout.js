@@ -1,14 +1,20 @@
 // import classes from '*.module.css';
-import React from 'react';
+import React, { Component } from 'react';
 import Aux from '../../hoc/auxi';
-import classes from './layout.module.css';
+import classes from './Layout.module.css';
 import Toolbar from '../Navigation/Toolbar/Toolbar';
+import SideDrawer from '../Navigation/Sidedrawer/SideDrawer';
 
-const layout = (props) => (
-  <Aux>
-    <Toolbar />
-    <main className={classes.Content}>{props.children}</main>
-  </Aux>
-);
+class Layout extends Component {
+  render() {
+    return (
+      <Aux>
+        <Toolbar />
+        <SideDrawer />
+        <main className={classes.Content}>{this.props.children}</main>
+      </Aux>
+    );
+  }
+}
 
-export default layout;
+export default Layout;
