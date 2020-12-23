@@ -10,16 +10,16 @@ import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import Spinner from '../../components/UI/Spinner/Spinner';
 
 const INGREDIENT_PRICES = {
-  salad: 0.5,
-  ham: 0.7,
-  cheese: 0.4,
-  meat: 1.3,
+  salad: 10,
+  ham: 50,
+  cheese: 40,
+  meat: 60,
 };
 
 class BurgerBuilder extends Component {
   state = {
     ingredients: null,
-    totalPrice: 4,
+    totalPrice: 10,
     purchasable: false,
     purchasing: false,
     loading: false,
@@ -27,6 +27,7 @@ class BurgerBuilder extends Component {
   };
 
   componentDidMount() {
+    console.log(this.props);
     axios
       .get(
         'https://react-my-burger-bd5d9-default-rtdb.firebaseio.com/ingredients.json'
@@ -93,29 +94,20 @@ class BurgerBuilder extends Component {
   };
 
   purchaseContinueHandler = () => {
-    this.setState({ loading: true });
-    const order = {
-      ingredients: this.state.ingredients,
-      price: this.state.totalPrice,
-      customer: {
-        name: 'Max',
-        address: {
-          street: 'aloo laylo',
-          zipCode: '6020',
-          country: 'kashmir',
-        },
-        email: 'demo@demo.com',
-      },
-      deliveryMethod: 'fastest',
-    };
-    axios
-      .post('/orders.json', order)
-      .then((response) => {
-        this.setState({ loading: false, purchasing: false });
-      })
-      .catch((error) => {
-        this.setState({ loading: false, purchasing: false });
-      });
+    const queryParams = [];
+    for (let i in this.state.ingredients) {
+      queryParams.push(
+        encodeURIComponent(i) +
+          '=' +
+          encodeURIComponent(this.state.ingredients[i])
+      );
+    }
+    queryParams.push('price=' + this.state.totalPrice);
+    const queryString = queryParams.join('&');
+    this.props.history.push({
+      pathname: '/checkout',
+      search: '?' + queryString,
+    });
   };
 
   render() {
@@ -146,7 +138,7 @@ class BurgerBuilder extends Component {
       orderSummary = (
         <OrderSummary
           ingredients={this.state.ingredients}
-          price={this.state.totalPrice.toFixed(1)}
+          price={this.state.totalPrice.toFixed(0)}
           purchaseCanceled={this.purchaseCancelHandler}
           purchaseContinue={this.purchaseContinueHandler}
         />
